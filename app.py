@@ -168,11 +168,11 @@ def FT_pie(week):
     item_fr_df = item_fr_df.reset_index(drop = False).rename(columns = {'index': 'FT_Item'})
     FT_list_all = item_fr_df['FT_Item'].tolist()
 
-    #FT top10:
+    #FT top5:
     index_stop = bin_columncounter(FT_list_all, '96OTHERS1(%)')
     FT_summary_df = item_fr_df[0:index_stop].sort_values('Performance', ascending = False)
-    FT_list = list(FT_summary_df['FT_Item'][:7])
-    #FT_list.remove("App (%)")
+    FT_summary_df = FT_summary_df.set_index('FT_Item').drop('App (%)').reset_index(drop=False)
+    FT_list = list(FT_summary_df['FT_Item'][1:6])
 
     #Yield/loss by week:
     total_items = FT_list
@@ -181,7 +181,7 @@ def FT_pie(week):
     yield_WeeklyAvg = yield_WeeklyAvg.drop('total_die', axis = 1)
 
     #loss by week:
-    loss_WeeklyAvg = yield_WeeklyAvg.T[2:]
+    loss_WeeklyAvg = yield_WeeklyAvg.T
 
     loss_dict = {}
     item_list = []
@@ -224,7 +224,7 @@ def FT_table(week):
     index_stop = bin_columncounter(FT_list_all, '96OTHERS1(%)')
     FT_summary_df = item_fr_df[0:index_stop].sort_values('Performance', ascending = False)
     FT_list = list(FT_summary_df['FT_Item'][:7])
-    #FT_list.remove("App (%)")
+    FT_list.remove("App (%)")
 
     #Yield/loss by week:
     total_items = FT_list
@@ -233,7 +233,7 @@ def FT_table(week):
     yield_WeeklyAvg = yield_WeeklyAvg.drop('total_die', axis = 1)
 
     #loss by week:
-    loss_WeeklyAvg = yield_WeeklyAvg.T[2:]
+    loss_WeeklyAvg = yield_WeeklyAvg.T[1:]
     
     bin_array = []
     item_list = []
@@ -248,7 +248,8 @@ def FT_table(week):
         loss_table['name'] = item_list[i]
         loss_table['fail'] = round(fail_list[i],2)
         bin_array.append(loss_table)
-
+    
+    print(bin_array)
     return jsonify(bin_array)
 
 @app.route("/SLT_pie/<week>")
@@ -277,7 +278,7 @@ def SLT_pie(week):
     item_fr_df = item_fr_df.reset_index(drop = False).rename(columns = {'index': 'FT_Item'})
     FT_list_all = item_fr_df['FT_Item'].tolist()
 
-    #SLT top10:
+    #SLT top5:
     index_start = bin_columncounter(FT_list_all, '101SpecialPASS1(%)')
     SLT_summary_df = item_fr_df[index_start:].sort_values('Performance', ascending = False)
     SLT_summary_df = SLT_summary_df.rename(columns = {'FT_Item':'SLT_Item'})
@@ -329,7 +330,7 @@ def SLT_table(week):
     item_fr_df = item_fr_df.reset_index(drop = False).rename(columns = {'index': 'FT_Item'})
     FT_list_all = item_fr_df['FT_Item'].tolist()
 
-    #SLT top10:
+    #SLT top5:
     index_start = bin_columncounter(FT_list_all, '101SpecialPASS1(%)')
     SLT_summary_df = item_fr_df[index_start:].sort_values('Performance', ascending = False)
     SLT_summary_df = SLT_summary_df.rename(columns = {'FT_Item':'SLT_Item'})
